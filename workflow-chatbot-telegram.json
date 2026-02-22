@@ -1,5 +1,5 @@
 {
-  "name": "Desafio Fase 2 - Bot Telegram",
+  "name": "Desafio Fase 2 - Bot Telegram Google",
   "nodes": [
     {
       "parameters": {
@@ -12,11 +12,11 @@
       "typeVersion": 1.2,
       "position": [
         0,
-        0
+        528
       ],
-      "id": "ccc581bf-14ba-4152-a6e2-d9d994ea890e",
+      "id": "159d0903-e114-41a4-b348-684c2667b1e4",
       "name": "Telegram Trigger",
-      "webhookId": "7def26c5-a41c-4b2f-8561-b9922cd022de",
+      "webhookId": "f8b32c7c-38e2-40fa-935c-b35a4518763a",
       "credentials": {
         "telegramApi": {
           "id": "VIWYhvS70KV5mk4b",
@@ -41,10 +41,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        208,
-        0
+        224,
+        528
       ],
-      "id": "56d4d4f7-bc52-40cf-a5fb-4e68bb249eb9",
+      "id": "065ebede-e91c-44b6-b79a-23d0211d0fb7",
       "name": "Edit Fields"
     },
     {
@@ -67,7 +67,7 @@
             },
             {
               "name": "appid",
-              "value": "bdd27d4b5cc2b55d2f1fe3ed54003281"
+              "value": "{{ $vars.OPENWEATHER_API_KEY }}"
             }
           ]
         },
@@ -82,10 +82,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        416,
-        0
+        448,
+        528
       ],
-      "id": "10e7ed4a-7944-431e-af09-fc7ee9614064",
+      "id": "0cf79186-8034-4a9c-a984-3fc3852e2f47",
       "name": "HTTP Request",
       "alwaysOutputData": true,
       "onError": "continueRegularOutput"
@@ -135,10 +135,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        608,
-        0
+        672,
+        528
       ],
-      "id": "1a345982-eb3a-41f5-bf46-4f9eb8347ff6",
+      "id": "097636ab-4393-46ab-9ba9-4439b2fdc0e1",
       "name": "If"
     },
     {
@@ -150,12 +150,12 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        832,
-        96
+        960,
+        672
       ],
-      "id": "de458122-3c66-4841-8148-648cc8bf85a2",
+      "id": "ab4e1d0a-6694-49cf-b822-6779895eefa5",
       "name": "Send a text message",
-      "webhookId": "fa56b617-74f8-42ea-a44b-3d50930d609d",
+      "webhookId": "022a34c5-48cb-4954-a26e-e8e39184248f",
       "credentials": {
         "telegramApi": {
           "id": "VIWYhvS70KV5mk4b",
@@ -166,24 +166,74 @@
     {
       "parameters": {
         "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
-        "text": "=🌤️ A temperatura em {{ $json.body.name }} é de {{ Math.round($json.body.main.temp)}}°C. ",
+        "text": "={{ $json.message }}",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        832,
-        -96
+        1472,
+        404
       ],
-      "id": "2eee224e-557e-4c74-8ef0-155928c26996",
+      "id": "ad0a25b6-2306-42f5-a55e-08db830c41dc",
       "name": "Send a text message1",
-      "webhookId": "4134217e-a365-40a4-a0e3-1c3646e3b41e",
+      "webhookId": "9bfac374-272f-4502-8276-fb9f8198c9c5",
       "credentials": {
         "telegramApi": {
           "id": "VIWYhvS70KV5mk4b",
           "name": "Telegram account"
         }
       }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Você é um assistente meteorológico brasileiro, gentil e prestativo.\nDADOS RECEBIDOS:\n- Cidade: {{ $json.body.name }}\n- Temperatura: {{ Math.round($json.body.main.temp) }}°C\n- Condição: {{ $json.body.weather[0].description }}\n\nSUA TAREFA:\nEscreva uma frase curta, amigável e com emojis para informar o clima ao usuário.\n\nREGRAS CRÍTICAS:\n1. Responda OBRIGATORIAMENTE em Português do Brasil (pt-BR).\n2. Não use termos em inglês como \"overcast clouds\" ou \"broken clouds\", traduza-os de forma natural se necessário.\n3. Responda APENAS a frase final, sem introduções como \"Aqui está sua frase\" ou explicações.\n4. Mantenha um tom descontraído.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        896,
+        176
+      ],
+      "id": "b2e214ba-10fd-4080-ba2a-a2fd7a68df90",
+      "name": "AI Agent",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        968,
+        400
+      ],
+      "id": "9a9da0c0-66fd-4980-840f-a59a9f9e18b1",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "njIkPEIn74ugFnLw",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Busca os dados do clima (Vem do HTTP Request, não importa onde ele esteja atrás)\nconst weather = $('HTTP Request').item.json.body;\n\n// 2. Tenta buscar o que o AI Agent gerou\nlet aiMessage = \"\";\ntry {\n  // O n8n mantém o histórico. Vamos tentar pegar o output do Agent.\n  aiMessage = $('AI Agent').item.json.output;\n} catch (e) {\n  // Se o nó AI Agent não rodou ou deu erro, aiMessage continua vazia\n  aiMessage = \"\";\n}\n\n// 3. Lógica Determinística (Exigência da Rocketseat)\nlet finalMessage = \"\";\n\n// Se a IA deu uma resposta válida (maior que 5 caracteres para evitar lixo)\nif (aiMessage && aiMessage.trim().length > 5) {\n  finalMessage = aiMessage;\n} else {\n  // FALLBACK DETERMINÍSTICO OBRIGATÓRIO\n  finalMessage = `🌤️ A temperatura em ${weather.name} é de ${Math.round(weather.main.temp)}°C.`;\n}\n\nreturn {\n  message: finalMessage\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        404
+      ],
+      "id": "540ffd66-2f6f-4352-860e-0c970187e996",
+      "name": "Code - fallback"
     }
   ],
   "pinData": {
@@ -205,11 +255,8 @@
               "type": "private"
             },
             "date": 1771775367,
-            "text": "Novo Hamburgo, rs"
+            "text": "Rio de janeiro, Rj"
           }
-        },
-        "pairedItem": {
-          "item": 0
         }
       }
     ]
@@ -252,7 +299,7 @@
       "main": [
         [
           {
-            "node": "Send a text message1",
+            "node": "AI Agent",
             "type": "main",
             "index": 0
           }
@@ -260,6 +307,39 @@
         [
           {
             "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code - fallback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - fallback": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
             "type": "main",
             "index": 0
           }
@@ -273,11 +353,11 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "4736a457-837e-4cad-9d43-2607c0116b4d",
+  "versionId": "e6038604-833a-4b33-9a05-e2453629bf6d",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "30b10e1aa616edc2bc2582e003d5dd784866e23c6563b004f983442e7b4ad241"
   },
-  "id": "2RKOfOxcm3gf5ypN",
+  "id": "uPBOrkmIit6zw7iG",
   "tags": []
 }
