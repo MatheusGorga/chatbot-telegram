@@ -10,6 +10,7 @@ Este repositório contém a solução avançada para o desafio da pós-graduaç�
   - **Instabilidade (Outros):** Aviso de serviço indisponível.
 - **UX com Formatação Rica:** Uso de **Markdown** para destacar informações críticas (Cidade e Temperatura) em negrito, facilitando a leitura escaneável no Telegram.
 - **AI Agent Contextual:** Prompt otimizado para garantir respostas estritamente em Português (pt-BR), com tom amigável e uso estratégico de emojis.
+- **Validação Antecipada:** Implementada validação via Regex no input para filtrar números e caracteres especiais antes da chamada à API, economizando recursos e evitando requisições inválidas.
 
 ## 📦 Arquivos do Projeto
 - `workflow-chatbot-telegram.json`: Fluxo completo exportado.
