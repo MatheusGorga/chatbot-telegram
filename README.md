@@ -2,7 +2,7 @@
 
 Este repositório contém a solução aprimorada para o desafio da pós-graduação: um chatbot inteligente para Telegram desenvolvido no **n8n**. O sistema integra a **OpenWeather API** para dados climáticos e o **Google Gemini** para geração de respostas humanizadas.
 
-## 🚀 Diferenciais do Projeto (Refinamento Sênior)
+## 🚀 Diferenciais do Projeto
 - **Lógica Linear com Fallback:** Fluxo resiliente que utiliza um nó de código para garantir resposta determinística caso a IA falhe.
 - **Tratamento de Erros Granular:** Diferenciação entre cidade não encontrada (Erro 404) e instabilidade nos serviços externos (Erro 500), melhorando a comunicação com o usuário.
 - **AI Agent (LangChain):** Uso do modelo **Gemini-1.5-Pro** para criar mensagens naturais e contextualizadas em Português (pt-BR).
