@@ -11,8 +11,8 @@
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1.2,
       "position": [
-        0,
-        528
+        -224,
+        696
       ],
       "id": "159d0903-e114-41a4-b348-684c2667b1e4",
       "name": "Telegram Trigger",
@@ -31,7 +31,7 @@
             {
               "id": "6aa80d3b-fc1f-439c-a055-31b269f3ced3",
               "name": "=queue",
-              "value": "={{ $json.message.text.trim().toLowerCase().normalize('NFD').replace(/\\u0300|\\u0301|\\u0302|\\u0303|\\u0308/g, '') }}",
+              "value": "={{ $json.message.text.trim().toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g, \"\").replace(/[^a-z\\s,]/g, \"\") }}",
               "type": "string"
             }
           ]
@@ -41,54 +41,11 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        224,
-        528
+        0,
+        696
       ],
       "id": "065ebede-e91c-44b6-b79a-23d0211d0fb7",
       "name": "Edit Fields"
-    },
-    {
-      "parameters": {
-        "url": "https://api.openweathermap.org/data/2.5/weather",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "q",
-              "value": "={{ $json.queue.split(\",\")[0] }}"
-            },
-            {
-              "name": "units",
-              "value": "metric"
-            },
-            {
-              "name": "lang",
-              "value": "pt_br"
-            },
-            {
-              "name": "appid",
-              "value": "{{ $vars.OPENWEATHER_API_KEY }}"
-            }
-          ]
-        },
-        "options": {
-          "response": {
-            "response": {
-              "fullResponse": true
-            }
-          }
-        }
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.4,
-      "position": [
-        448,
-        528
-      ],
-      "id": "0cf79186-8034-4a9c-a984-3fc3852e2f47",
-      "name": "HTTP Request",
-      "alwaysOutputData": true,
-      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
@@ -110,15 +67,6 @@
               }
             },
             {
-              "id": "de3ba0f4-9984-4b6c-a96d-8147ff241e35",
-              "leftValue": "={{ $json.body.name.trim().toLowerCase().normalize('NFD').replace(/\\u0300|\\u0301|\\u0302|\\u0303|\\u0308/g, '')  }}",
-              "rightValue": "={{ $('Edit Fields').item.json.queue.split(\",\")[0] }}",
-              "operator": {
-                "type": "string",
-                "operation": "equals"
-              }
-            },
-            {
               "id": "90ff5996-baa2-4156-bc60-601a191f058d",
               "leftValue": "={{ $json.body.sys.country }}",
               "rightValue": "BR",
@@ -135,8 +83,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        672,
-        528
+        448,
+        696
       ],
       "id": "097636ab-4393-46ab-9ba9-4439b2fdc0e1",
       "name": "If"
@@ -150,8 +98,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        960,
-        672
+        1024,
+        748
       ],
       "id": "ab4e1d0a-6694-49cf-b822-6779895eefa5",
       "name": "Send a text message",
@@ -167,13 +115,15 @@
       "parameters": {
         "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
         "text": "={{ $json.message }}",
-        "additionalFields": {}
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1472,
-        404
+        1248,
+        504
       ],
       "id": "ad0a25b6-2306-42f5-a55e-08db830c41dc",
       "name": "Send a text message1",
@@ -188,14 +138,14 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Você é um assistente meteorológico brasileiro, gentil e prestativo.\nDADOS RECEBIDOS:\n- Cidade: {{ $json.body.name }}\n- Temperatura: {{ Math.round($json.body.main.temp) }}°C\n- Condição: {{ $json.body.weather[0].description }}\n\nSUA TAREFA:\nEscreva uma frase curta, amigável e com emojis para informar o clima ao usuário.\n\nREGRAS CRÍTICAS:\n1. Responda OBRIGATORIAMENTE em Português do Brasil (pt-BR).\n2. Não use termos em inglês como \"overcast clouds\" ou \"broken clouds\", traduza-os de forma natural se necessário.\n3. Responda APENAS a frase final, sem introduções como \"Aqui está sua frase\" ou explicações.\n4. Mantenha um tom descontraído.",
+        "text": "=Você é um assistente meteorológico brasileiro, gentil e prestativo.\nDADOS RECEBIDOS:\n\nCidade: {{ $json.body.name }}\n\nTemperatura: {{ Math.round($json.body.main.temp) }}°C\n\nCondição: {{ $json.body.weather[0].description }}\n\nSUA TAREFA:\nEscreva uma frase curta, amigável e com emojis para informar o clima ao usuário.\n\nREGRAS CRÍTICAS:\n\nResponda OBRIGATORIAMENTE em Português do Brasil (pt-BR).\n\nFormate o nome da CIDADE e a TEMPERATURA em NEGRITO usando asteriscos (ex: **São Paulo** e **25°C**).\n\nNão use termos em inglês; traduza-os de forma natural.\n\nResponda APENAS a frase final.",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        896,
-        176
+        672,
+        400
       ],
       "id": "b2e214ba-10fd-4080-ba2a-a2fd7a68df90",
       "name": "AI Agent",
@@ -210,8 +160,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        968,
-        400
+        744,
+        624
       ],
       "id": "9a9da0c0-66fd-4980-840f-a59a9f9e18b1",
       "name": "Google Gemini Chat Model",
@@ -224,43 +174,126 @@
     },
     {
       "parameters": {
-        "jsCode": "// 1. Busca os dados do clima (Vem do HTTP Request, não importa onde ele esteja atrás)\nconst weather = $('HTTP Request').item.json.body;\n\n// 2. Tenta buscar o que o AI Agent gerou\nlet aiMessage = \"\";\ntry {\n  // O n8n mantém o histórico. Vamos tentar pegar o output do Agent.\n  aiMessage = $('AI Agent').item.json.output;\n} catch (e) {\n  // Se o nó AI Agent não rodou ou deu erro, aiMessage continua vazia\n  aiMessage = \"\";\n}\n\n// 3. Lógica Determinística (Exigência da Rocketseat)\nlet finalMessage = \"\";\n\n// Se a IA deu uma resposta válida (maior que 5 caracteres para evitar lixo)\nif (aiMessage && aiMessage.trim().length > 5) {\n  finalMessage = aiMessage;\n} else {\n  // FALLBACK DETERMINÍSTICO OBRIGATÓRIO\n  finalMessage = `🌤️ A temperatura em ${weather.name} é de ${Math.round(weather.main.temp)}°C.`;\n}\n\nreturn {\n  message: finalMessage\n};"
+        "jsCode": "// 1. Busca os dados do clima\nconst weather = $('HTTP Request').item.json.body;\n\n// 2. Tenta buscar o que o AI Agent gerou\nlet aiMessage = \"\";\ntry {\n  aiMessage = $('AI Agent').item.json.output;\n} catch (e) {\n  aiMessage = \"\";\n}\n\n// 3. Lógica Determinística\nlet finalMessage = \"\";\n\nif (aiMessage && aiMessage.trim().length > 5) {\n  finalMessage = aiMessage;\n} else {\n  // FALLBACK DETERMINÍSTICO COM MARKDOWN (Refinamento Sênior)\n  // Usamos ** para negrito conforme sugerido no feedback\n  finalMessage = `🌤️ A temperatura em **${weather.name}** é de **${Math.round(weather.main.temp)}°C**.`;\n}\n\nreturn {\n  message: finalMessage\n};"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1248,
-        404
+        1024,
+        504
       ],
       "id": "540ffd66-2f6f-4352-860e-0c970187e996",
       "name": "Code - fallback"
-    }
-  ],
-  "pinData": {
-    "Telegram Trigger": [
-      {
-        "json": {
-          "update_id": 860863588,
-          "message": {
-            "message_id": 6,
-            "from": {
-              "id": 8420975698,
-              "is_bot": false,
-              "first_name": "Matheus",
-              "language_code": "pt-br"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openweathermap.org/data/2.5/weather",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $json.queue.split(\",\")[0] }}"
             },
-            "chat": {
-              "id": 8420975698,
-              "first_name": "Matheus",
-              "type": "private"
+            {
+              "name": "units",
+              "value": "metric"
             },
-            "date": 1771775367,
-            "text": "Rio de janeiro, Rj"
+            {
+              "name": "lang",
+              "value": "pt_br"
+            },
+            {
+              "name": "appid",
+              "value": "={{ $vars.OPENWEATHER_API_KEY }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
           }
         }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        224,
+        696
+      ],
+      "id": "5962a25e-9a3f-4571-a276-7b0ad3eea1d3",
+      "name": "HTTP Request",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5e5a45cf-fd7d-4203-9484-b61d687c4ba5",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 200,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "f09dd590-c06a-48cd-a8bd-bf49b354b836",
+              "leftValue": "={{ $json.body.sys.country }}",
+              "rightValue": "BR",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        736,
+        844
+      ],
+      "id": "b1f8b0d1-1479-43db-b785-e91f16d35c2e",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "⚠️ O serviço de clima está instável ou a cidade é inválida. Tente novamente mais tarde.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1024,
+        940
+      ],
+      "id": "ff9ce37e-4637-479b-90db-706d0b0a189d",
+      "name": "Send a text message2",
+      "webhookId": "022a34c5-48cb-4954-a26e-e8e39184248f",
+      "credentials": {
+        "telegramApi": {
+          "id": "VIWYhvS70KV5mk4b",
+          "name": "Telegram account"
+        }
       }
-    ]
-  },
+    }
+  ],
+  "pinData": {},
   "connections": {
     "Telegram Trigger": {
       "main": [
@@ -284,17 +317,6 @@
         ]
       ]
     },
-    "HTTP Request": {
-      "main": [
-        [
-          {
-            "node": "If",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "If": {
       "main": [
         [
@@ -306,7 +328,7 @@
         ],
         [
           {
-            "node": "Send a text message",
+            "node": "If1",
             "type": "main",
             "index": 0
           }
@@ -345,6 +367,35 @@
           }
         ]
       ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -353,7 +404,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "e6038604-833a-4b33-9a05-e2453629bf6d",
+  "versionId": "77a5e79e-3bd2-4146-b138-9343ee5417e1",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "30b10e1aa616edc2bc2582e003d5dd784866e23c6563b004f983442e7b4ad241"
