@@ -57,4 +57,10 @@ Para total portabilidade, o projeto utiliza as seguintes nomenclaturas de variá
 4. **Cenário de Erro:** Envie um nome inválido (ex: `12345`) e receba o aviso de "Cidade não encontrada".
 
 ---
+
+## ✅ Teste
+![IMG_5FB226D2B000-1](https://github.com/user-attachments/assets/0be32ef7-9885-4de4-83f9-dbf0532999b9)
+
+
+
 *Desenvolvido por Matheus para o desafio da Rocketseat 💜*
